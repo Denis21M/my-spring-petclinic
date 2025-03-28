@@ -2,7 +2,7 @@ name: Deploy to EC2
 
 on:
   workflow_run:
-    workflows: [ "Java CI with Maven" ]   # The name of your CI workflow
+    workflows: [ "Java CI with Maven" ] 
     types:
       - completed
 
@@ -17,15 +17,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: spring-petclinic-jar
+          path: . 
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.EC2_PRIVATE_KEY }}
 
-
       - name: Copy JAR to EC2
-        run: scp -o StrictHostKeyChecking=no target/spring-petclinic-*.jar ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/
+        run: scp -o StrictHostKeyChecking=no spring-petclinic-*.jar ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/
 
       - name: Start Spring PetClinic
         run: ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }} "nohup java -jar /home/ubuntu/spring-petclinic-*.jar &"
